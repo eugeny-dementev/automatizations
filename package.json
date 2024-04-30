@@ -1,0 +1,41 @@
+{
+  "name": "automatizations",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "compile": "tsc --project ./tsconfig.json",
+    "watch": "tsc --watch --project ./tsconfig.json",
+    "server": "node --enable-source-maps ./built/server.js",
+    "server:dev": "nodemon ./built/server.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eugeny-dementev/automatizations.git"
+  },
+  "keywords": [],
+  "author": "Eugeny Dementev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/eugeny-dementev/automatizations/issues"
+  },
+  "homepage": "https://github.com/eugeny-dementev/automatizations#readme",
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@playwright/test": "^1.42.1",
+    "@tsconfig/node20": "^20.1.2",
+    "@types/node": "^20.11.26",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2"
+  },
+  "dependencies": {
+    "async-queue-runner": "^0.10.0",
+    "@types/shelljs": "^0.8.15",
+    "parse-torrent": "^11.0.16",
+    "playwright": "^1.42.1",
+    "shelljs": "^0.8.5",
+    "telegraf": "^4.16.3",
+    "typescript": "^5.4.2"
+  }
+}

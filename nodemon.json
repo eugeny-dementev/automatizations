@@ -1,0 +1,13 @@
+{
+  "execMap": {
+    "js": "node --enable-source-maps"
+  },
+  "ignore": [
+    "node_modules",
+    "./src/login.ts"
+  ],
+  "watch": [
+    "./built/*.js",
+    "./src/*.ts"
+  ]
+}
