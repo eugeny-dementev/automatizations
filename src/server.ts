@@ -4,10 +4,10 @@ import { Readable } from 'stream';
 import { finished } from 'stream/promises';
 import { Telegraf } from 'telegraf';
 import { message } from 'telegraf/filters';
-import { ActionsQueueHandler } from "./queue.js";
+import { QueueRunner } from 'async-queue-runner';
 import { handleQBTFile } from './performances.js';
 import { ReadableStream } from 'stream/web';
-import { adminId, downloadsDir, publishersIds, token } from './config.js';
+import { adminId, downloadsDir, moviesDir, publishersIds, token } from './config.js';
 
 // Map of Russian to English transliteration
 const russianToEnglish = {
@@ -18,7 +18,7 @@ const russianToEnglish = {
   'я': 'ya'
 };
 
-const queue = new ActionsQueueHandler();
+const queue = new QueueRunner();
 
 const bot = new Telegraf(token);
 
@@ -80,7 +80,7 @@ bot.on(message('document'), async (ctx) => {
 
   await finished(Readable.fromWeb(response.body as ReadableStream).pipe(fileStream));
 
-  queue.addTask(handleQBTFile({ bot, adminId: adminChatId, chatId }, destination))
+  queue.add(handleQBTFile(), { filePath: destination, bot, adminId: adminChatId, chatId, dir: moviesDir });
 
   ctx.reply('Start processing message');
 });
