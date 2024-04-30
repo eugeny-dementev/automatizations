@@ -6,7 +6,7 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-FROM mcr.microsoft.com/playwright:jammy-amd64
+FROM utils/automatization
 
 WORKDIR /usr/src/app
 

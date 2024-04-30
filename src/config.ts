@@ -11,7 +11,7 @@ export const publishersIds = String(process.env.PUBLISHERS_IDS)
   .split(',')
   .map((id) => Number(id));
 
-export const adminId = process.env.ADMIN_ID as string;
+export const adminId = Number(process.env.ADMIN_ID as string);
 if (!adminId) {
   throw new Error('No ADMIN_ID env provided');
 }
