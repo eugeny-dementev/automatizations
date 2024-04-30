@@ -1,29 +1,25 @@
-// set of actions to performe for particular context
-
-import { Action, BotContext } from './action.js';
+import { Action } from 'async-queue-runner';
 import {
-  AddUploadToQBitTorrent, CheckTorrentFile,
-  DeleteFile, DownloadRtrcrFile,
-  ExtendContext, LogInfo,
-  OpenBrowser, OpenQBitTorrent,
-  OpenRtrcr, OpenRtrcrTopic,
-  TGPrintTorrentPatter
+  AddUploadToQBitTorrent,
+  CheckTorrentFile,
+  DeleteFile,
+  ExtendContext,
+  OpenBrowser,
+  OpenQBitTorrent,
+  TGPrintTorrentPattern
 } from './actions.js';
+import { BotContext } from './types.js';
 
-export function downloadRtrcrMovie(url: string, dir = 'D:\\Movies'): Action[] {
+export function downloadRtrcrMovie(url: string, dir = 'D:\\Movies'): Action<any>[] {
   return [
     new ExtendContext({ url, dir }),
     new OpenBrowser(),
-    new OpenRtrcr(),
-    new OpenRtrcrTopic(),
-    new DownloadRtrcrFile(),
     new OpenQBitTorrent(),
     new AddUploadToQBitTorrent(),
-    new LogInfo('File added to QBT'),
   ];
 }
 
-function botLoggerFactory(context: BotContext) {
+export function botLoggerFactory(context: BotContext) {
   const { bot, chatId, adminId } = context;
 
   return {
@@ -43,14 +39,11 @@ function botLoggerFactory(context: BotContext) {
   }
 }
 
-export function handleQBTFile(botContextbot: BotContext, torrentFilePath: string, dir = 'D:\\Movies'): Action[] {
-  const blogger = botLoggerFactory(botContextbot);
-
+export function handleQBTFile(): Action<any>[] {
   return [
-    new ExtendContext({ blogger, dir, torrentFilePath }),
-    new TGPrintTorrentPatter(),
+    new TGPrintTorrentPattern(),
     new CheckTorrentFile(),
-    new DeleteFile(torrentFilePath),
+    new DeleteFile(),
   ];
 }
 
@@ -69,6 +62,6 @@ function prettyError(error: Error) {
   return `${message}\n${stack}`;
 }
 
-function escapeRegExp(text) {
+function escapeRegExp(text: string) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
