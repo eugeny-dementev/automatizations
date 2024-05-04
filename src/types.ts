@@ -7,9 +7,9 @@ export type PlaywrightContext = {
 }
 
 type BLogger = {
-    info: (msg: string) => void,
-    error: (err: Error) => void,
-    adminInfo: (json: object) => void,
+  info: (msg: string) => void,
+  error: (err: Error) => void,
+  adminInfo: (json: object) => void,
 }
 
 export type BotContext = {
@@ -41,5 +41,11 @@ export type TFile = {
 
 export type Torrent = {
   files: TFile[],
+  name: string,
+}
+
+export type TorrentStatus = {
+  progress: number, // float 0.0 - 1.0
+  content_ath: string,
   name: string,
 }

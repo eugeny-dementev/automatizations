@@ -3,14 +3,14 @@ import { chromium } from 'playwright';
 import { promisify } from 'util';
 import * as path from "path";
 import { Page } from 'playwright';
-import { Action, QueueContext } from 'async-queue-runner';
+import { Action, util, QueueContext } from 'async-queue-runner';
 
 import parseTorrent from "parse-torrent";
-import { TFile, getDestination } from './torrent.js';
+import { getDestination } from './torrent.js';
 import animeDubRecognizer from './multi-track.js';
 import { qBitTorrentHost } from './config.js';
-import { BotContext, BrowserContext, PlaywrightContext, QBitTorrentContext, Torrent } from './types.js';
-import { omit } from './helpers.js';
+import { BotContext, BrowserContext, PlaywrightContext, QBitTorrentContext, Torrent, TorrentStatus } from './types.js';
+import { omit, sleep } from './helpers.js';
 
 const readFile = promisify(fs.readFile);
 const unlink = promisify(fs.unlink);
@@ -135,7 +135,7 @@ export class CheckTorrentFile extends Action<BotContext & QBitTorrentContext> {
     const { filePath } = context;
 
     const file = await readFile(path.resolve(filePath));
-    const torrent = await parseTorrent(file) as { files: TFile[] };
+    const torrent = await parseTorrent(file) as Torrent;
 
     if (torrent?.['files']) {
       console.log(torrent.files);
@@ -159,6 +159,8 @@ export class CheckTorrentFile extends Action<BotContext & QBitTorrentContext> {
       Log,
       AddUploadToQBitTorrent,
       CloseBrowser,
+      util.delay(5000),
+      MonitorDownloadingProgress,
     ]);
   }
 }
@@ -191,6 +193,47 @@ export class TGPrintTorrentPattern extends Action<BotContext & QBitTorrentContex
     console.log('torrent:', torrent.name);
 
     extend({ torrentName: torrent.name });
+  }
+}
+
+export class MonitorDownloadingProgress extends Action<BotContext & { torrentName: string }> {
+  async execute(context: { torrentName: string; } & BotContext & QueueContext): Promise<void> {
+    const { torrentName, bot, chatId } = context;
+
+    try {
+      const mesage = await bot.telegram.sendMessage(chatId, 'Start downloading torrent ' + torrentName);
+      const messageId = mesage.message_id;
+      let progressCache = '';
+      let downloaded = false;
+      while (!downloaded) {
+        const response = await fetch('http://localhost:8080/api/v2/torrents/info?filter=downloading');
+        const torrents = JSON.parse(await response.text()) as TorrentStatus[];
+        if (torrents.length === 0) downloaded = true;
+        const torrent = torrents.find(t => t.name === torrentName);
+        if (!torrent) {
+          downloaded = true;
+          break;
+        }
+
+        const status = {
+          name: torrent.name,
+          progress: (100 * torrent.progress).toFixed(0),
+        };
+
+        if (progressCache !== status.progress) {
+          await bot.telegram.editMessageText(chatId, messageId, undefined, `${torrentName} progress: ${status.progress}%`);
+          progressCache = status.progress;
+        }
+
+        console.log('torrents', status);
+        await sleep(5000);
+      }
+
+      await bot.telegram.editMessageText(chatId, messageId, undefined, `${torrentName} downloaded`);
+    } catch (e) {
+      console.log('MonitorDownloadingProgress failed');
+      console.error(e);
+    }
   }
 }
 
