@@ -32,3 +32,14 @@ export type QBitTorrentContext = {
   torrentFilePath: string,
 };
 
+export type TFile = {
+  name: string,
+  path: string,
+  length: number,
+  offset: number,
+}
+
+export type Torrent = {
+  files: TFile[],
+  name: string,
+}

@@ -9,7 +9,7 @@ import parseTorrent from "parse-torrent";
 import { TFile, getDestination } from './torrent.js';
 import animeDubRecognizer from './multi-track.js';
 import { qBitTorrentHost } from './config.js';
-import { BotContext, BrowserContext, PlaywrightContext, QBitTorrentContext } from './types.js';
+import { BotContext, BrowserContext, PlaywrightContext, QBitTorrentContext, Torrent } from './types.js';
 import { omit } from './helpers.js';
 
 const readFile = promisify(fs.readFile);
@@ -165,11 +165,11 @@ export class CheckTorrentFile extends Action<BotContext & QBitTorrentContext> {
 
 export class TGPrintTorrentPattern extends Action<BotContext & QBitTorrentContext> {
   async execute(context: BotContext & QBitTorrentContext & QueueContext): Promise<void> {
-    const { filePath } = context;
+    const { filePath, extend } = context;
     const dirs = new Set();
 
     const file = await readFile(path.resolve(filePath));
-    const torrent = await parseTorrent(file) as { files: TFile[] };
+    const torrent = await parseTorrent(file) as Torrent;
 
     for (const file of torrent.files) {
       const { path: filePath } = file;
@@ -188,6 +188,9 @@ export class TGPrintTorrentPattern extends Action<BotContext & QBitTorrentContex
 
     console.log(patterns);
     console.log(Array.from(animeDubRecognizer(patterns)));
+    console.log('torrent:', torrent.name);
+
+    extend({ torrentName: torrent.name });
   }
 }
 

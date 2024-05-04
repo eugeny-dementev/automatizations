@@ -1,11 +1,5 @@
 import { moviesDir, tvshowsDir } from "./config.js";
-
-export type TFile = {
-  name: string,
-  path: string,
-  length: number,
-  offset: number,
-}
+import { TFile } from "./types.js";
 
 /**
  * Check torrent files
