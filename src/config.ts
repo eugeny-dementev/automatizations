@@ -1,4 +1,4 @@
-export const qBitTorrentHost = `${process.env.QBT_HOSTNAME ?? 'localhost'}:8080`;
+export const qBitTorrentHost = `http://${process.env.QBT_HOSTNAME ?? 'localhost'}:8080`;
 
 export const downloadsDir = process.env.DOWNLOADS_DIR as string;
 if (!downloadsDir) {

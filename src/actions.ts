@@ -206,7 +206,7 @@ export class MonitorDownloadingProgress extends Action<BotContext & { torrentNam
       let progressCache = '';
       let downloaded = false;
       while (!downloaded) {
-        const response = await fetch('http://localhost:8080/api/v2/torrents/info?filter=downloading');
+        const response = await fetch(`${qBitTorrentHost}/api/v2/torrents/info?filter=downloading`);
         const torrents = JSON.parse(await response.text()) as TorrentStatus[];
         if (torrents.length === 0) downloaded = true;
         const torrent = torrents.find(t => t.name === torrentName);
