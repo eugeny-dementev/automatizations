@@ -16,6 +16,7 @@ export type BotContext = {
   bot: Telegraf,
   filePath: string,
   logger: Logger,
+  destination: string,
   blogger: BLogger,
   adminId: number,
   chatId: number,

@@ -75,14 +75,11 @@ bot.on(message('document'), async (ctx) => {
   const destination = path.join(downloadsDir, englishFileName);
   const response = await fetch(fileUrl);
 
-
   const fileStream = fs.createWriteStream(destination);
 
   await finished(Readable.fromWeb(response.body as ReadableStream).pipe(fileStream));
 
   queue.add(handleQBTFile(), { filePath: destination, bot, adminId: adminChatId, chatId, dir: moviesDir });
-
-  ctx.reply('Start processing message');
 });
 
 bot.use((ctx) => {

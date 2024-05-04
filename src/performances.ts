@@ -1,9 +1,10 @@
-import { Action } from 'async-queue-runner';
+import { Action, QueueAction } from 'async-queue-runner';
 import {
   AddUploadToQBitTorrent,
   CheckTorrentFile,
   DeleteFile,
   ExtendContext,
+  Log,
   OpenBrowser,
   OpenQBitTorrent,
   TGPrintTorrentPattern
@@ -39,13 +40,12 @@ export function botLoggerFactory(context: BotContext) {
   }
 }
 
-export function handleQBTFile(): Action<any>[] {
-  return [
-    new TGPrintTorrentPattern(),
-    new CheckTorrentFile(),
-    new DeleteFile(),
-  ];
-}
+export const handleQBTFile: () => QueueAction[] = () => [
+  Log,
+  TGPrintTorrentPattern,
+  CheckTorrentFile,
+  DeleteFile,
+];
 
 function prettyError(error: Error) {
   if (!(error instanceof Error)) {
