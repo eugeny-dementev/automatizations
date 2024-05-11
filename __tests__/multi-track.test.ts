@@ -20,7 +20,7 @@ const subs = {
   ],
 }
 
-describe('Anime dub sub chooser', () => {
+describe('Multi-track dub sub chooser', () => {
   test('schold choose forth if present in patterns array', () => {
     const expectedString = subs.n1;
 
